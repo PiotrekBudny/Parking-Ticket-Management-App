@@ -1,0 +1,6 @@
+@Parking_Ticket_Management_App_HostAddress = http://localhost:5175
+
+GET {{Parking_Ticket_Management_App_HostAddress}}/parking-ticket/is-alive/
+Accept: application/json
+
+###

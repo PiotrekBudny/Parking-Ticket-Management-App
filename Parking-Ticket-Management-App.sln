@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parking-Ticket-Management-App", "Parking-Ticket-Management-App\Parking-Ticket-Management-App.csproj", "{F8F0D2E3-3965-431F-9715-1F5DEADB3913}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F8F0D2E3-3965-431F-9715-1F5DEADB3913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8F0D2E3-3965-431F-9715-1F5DEADB3913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8F0D2E3-3965-431F-9715-1F5DEADB3913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8F0D2E3-3965-431F-9715-1F5DEADB3913}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {34F543A5-51D6-4AC6-B4DD-E5A04E4E19C6}
+	EndGlobalSection
+EndGlobal
