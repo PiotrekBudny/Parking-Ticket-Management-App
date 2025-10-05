@@ -42,10 +42,12 @@ namespace Parking_Ticket_Management_App.Logic
 
         private DateTime CalculateValidToDate(DateTime validFrom)
         {
-            var localValidFrom = validFrom.ToLocalTime();
-            var localValidTo = new DateTime(localValidFrom.Year, localValidFrom.Month, 1, 0, 0, 0).AddMonths(1).TrimMilliseconds();
+            var cetTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+            var cetValidFrom = TimeZoneInfo.ConvertTimeFromUtc(validFrom, cetTimeZone);
+            var localValidTo = new DateTime(cetValidFrom.Year, cetValidFrom.Month, 1, 0, 0, 0).AddMonths(1).TrimMilliseconds();
 
-            return localValidTo.ToUniversalTime();
+            var utcValidTo = TimeZoneInfo.ConvertTimeToUtc(localValidTo, cetTimeZone);
+            return utcValidTo;
         }
     }
 }
