@@ -1,6 +1,7 @@
 ﻿using Parking_Ticket_Management_App.Controllers.Models.BuyMonthTicket;
-using Parking_Ticket_Management_App.Extensions;
 using Parking_Ticket_Management_App.Memory.Models;
+using Parking_Ticket_Management_App.Utils;
+using Parking_Ticket_Management_App.Utils.Extensions;
 
 namespace Parking_Ticket_Management_App.Logic
 {
@@ -12,10 +13,12 @@ namespace Parking_Ticket_Management_App.Logic
     public class BuyTicketLogicHandler : IBuyTicketLogicHandler
     {
         private readonly IPriceCalculationLogicHandler _priceCalculationLogicHandler;
-
-        public BuyTicketLogicHandler(IPriceCalculationLogicHandler priceCalculationLogicHandler)
+        private ISystemDateTimeProvider _systemDateTimeProvider;
+        
+        public BuyTicketLogicHandler(IPriceCalculationLogicHandler priceCalculationLogicHandler, ISystemDateTimeProvider systemDateTimeProvider)
         {
             _priceCalculationLogicHandler = priceCalculationLogicHandler;
+            _systemDateTimeProvider = systemDateTimeProvider;
         }
 
         public ParkingTicket BuildParkingTicketMemoryEntity(BuyTicketRequest buyTicketRequest)
@@ -35,7 +38,7 @@ namespace Parking_Ticket_Management_App.Logic
             };
         }
 
-        private DateTime CalculateValidFromDate() => DateTime.UtcNow.TrimMilliseconds();
+        private DateTime CalculateValidFromDate() => _systemDateTimeProvider.UtcNow.TrimMilliseconds();
 
         private DateTime CalculateValidToDate(DateTime validFrom)
         {

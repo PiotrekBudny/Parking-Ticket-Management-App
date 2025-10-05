@@ -1,4 +1,4 @@
-﻿namespace Parking_Ticket_Management_App.Extensions
+﻿namespace Parking_Ticket_Management_App.Utils.Extensions
 {
     public static class DateTimeExtensions
     {

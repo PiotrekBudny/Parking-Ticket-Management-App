@@ -4,6 +4,7 @@ using Parking_Ticket_Management_App.Controllers.Models.BuyMonthTicket;
 using Parking_Ticket_Management_App.Controllers.Models.ValidateTicket;
 using Parking_Ticket_Management_App.Logic;
 using Parking_Ticket_Management_App.Memory;
+using Parking_Ticket_Management_App.Utils;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +21,7 @@ builder.Services.AddScoped<IPriceCalculationLogicHandler, PriceCalculationLogicH
 builder.Services.AddScoped<IBuyTicketLogicHandler, BuyTicketLogicHandler>();
 builder.Services.AddScoped<IParkingTicketHandler, ParkingTicketHandler>();
 builder.Services.AddScoped<IValidateTicketLogicHandler, ValidateTicketLogicHandler>();
+builder.Services.AddScoped<ISystemDateTimeProvider, SystemDateTimeProvider>();
 
 builder.Services.AddSingleton<IMemoryAccess, MemoryHandler>();
 
