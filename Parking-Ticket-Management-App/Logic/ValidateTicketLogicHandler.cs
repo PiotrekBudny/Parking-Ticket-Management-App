@@ -1,5 +1,5 @@
-﻿using Parking_Ticket_Management_App.Memory;
-using Parking_Ticket_Management_App.Memory.Models;
+﻿using Parking_Ticket_Management_App.Memory.Models;
+using Parking_Ticket_Management_App.Utils;
 
 namespace Parking_Ticket_Management_App.Logic
 {
@@ -10,16 +10,16 @@ namespace Parking_Ticket_Management_App.Logic
 
     public class ValidateTicketLogicHandler : IValidateTicketLogicHandler
     {
-        private IMemoryAccess _memoryHandler;
-
-        public ValidateTicketLogicHandler(IMemoryAccess memoryHandler)
+        private readonly ISystemDateTimeProvider _systemDateTimeProvider;
+        
+        public ValidateTicketLogicHandler(ISystemDateTimeProvider systemDateTimeProvider)
         {
-            _memoryHandler = memoryHandler;
+            _systemDateTimeProvider = systemDateTimeProvider;
         }
 
         public ParkingTicket? ValidateTicket(List<ParkingTicket> ticketsForLicensePlate)
         {
-            var currentTime = DateTime.UtcNow;
+            var currentTime = _systemDateTimeProvider.UtcNow;
 
             return ticketsForLicensePlate.FirstOrDefault(ticket => ticket.ValidFrom <= currentTime && ticket.ValidTo >= currentTime);
         }
