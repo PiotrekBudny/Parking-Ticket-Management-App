@@ -1,4 +1,5 @@
 ﻿using Parking_Ticket_Management_App.Controllers.Models.BuyMonthTicket;
+using Parking_Ticket_Management_App.Controllers.Models.UseTicket;
 using Parking_Ticket_Management_App.Controllers.Models.ValidateTicket;
 using Parking_Ticket_Management_App.Logic;
 using Parking_Ticket_Management_App.Memory;
@@ -9,6 +10,7 @@ namespace Parking_Ticket_Management_App.Controllers
     {
         BuyTicketResponse HandleBuyTicketRequest(BuyTicketRequest buyTicketRequest);
         ValidateTicketResponse HandleValidateTicketRequest(ValidateTicketRequest validateTicketRequest);
+        void HandleUseTicketRequest(UseTicketRequest useTicketRequest);
     }
 
     public class ParkingTicketHandler : IParkingTicketHandler
@@ -16,14 +18,17 @@ namespace Parking_Ticket_Management_App.Controllers
         private IBuyTicketLogicHandler _buyTicketLogicHandler;
         private IMemoryAccess _memoryAccess;
         private IValidateTicketLogicHandler _validateTicketLogicHandler;
+        private IUseTicketLogicHandler _useTicketHandler;
 
         public ParkingTicketHandler(IBuyTicketLogicHandler buyTicketLogicHandler,
             IValidateTicketLogicHandler validateTicketLogicHandler,
+            IUseTicketLogicHandler useTicketHandler,
             IMemoryAccess memoryAccess)
         {
             _buyTicketLogicHandler = buyTicketLogicHandler;
             _memoryAccess = memoryAccess;
             _validateTicketLogicHandler = validateTicketLogicHandler;
+            _useTicketHandler = useTicketHandler;
         }
 
         public BuyTicketResponse HandleBuyTicketRequest(BuyTicketRequest buyTicketRequest)
@@ -52,6 +57,7 @@ namespace Parking_Ticket_Management_App.Controllers
                 {
                     IsValid = false,
                     LicensePlate = validateTicketRequest.LicensePlate,
+                    WasAnyTicketUsed = null
                 };
             }
 
@@ -59,7 +65,25 @@ namespace Parking_Ticket_Management_App.Controllers
             {
                 IsValid = true,
                 LicensePlate = validParkingTicket.LicensePlate,
+                WasAnyTicketUsed = ticketsForLicensePlate.Any(t => t.WasUsed == true)
             };
+        }
+
+        public void HandleUseTicketRequest(UseTicketRequest useTicketRequest)
+        {
+            var ticketToUse = _memoryAccess.GetTicketByIdentity(useTicketRequest.TicketId);
+
+            if (ticketToUse != null)
+            {
+                var updatedTicket = _useTicketHandler.MarkTicketEntityAsUsed(ticketToUse);
+
+                _memoryAccess.UpdateTicketInMemory(updatedTicket);
+            }
+
+            else
+            {
+                throw new KeyNotFoundException("Ticket not found");
+            }
         }
     }
 }

@@ -21,7 +21,15 @@ namespace Parking_Ticket_Management_App.Logic
         {
             var currentTime = _systemDateTimeProvider.UtcNow;
 
-            return ticketsForLicensePlate.FirstOrDefault(ticket => ticket.ValidFrom <= currentTime && ticket.ValidTo >= currentTime);
+            var ticketThatHaveCorrectValidityDates = ticketsForLicensePlate.Where(ticket => ticket.ValidFrom <= currentTime && ticket.ValidTo >= currentTime);
+
+            var validAndUsedTickets = ticketThatHaveCorrectValidityDates.Where(ticket => ticket.WasUsed);
+            var validAndUnusedTickets = ticketThatHaveCorrectValidityDates.Where(ticket => !ticket.WasUsed);
+            
+
+            if (validAndUsedTickets.Any()) return validAndUsedTickets.OrderBy(ticket => ticket.ValidTo).First();
+            else if (validAndUnusedTickets.Any()) return validAndUnusedTickets.OrderBy(ticket => ticket.ValidTo).First();
+            else return null;
         }
     }
 }

@@ -4,5 +4,7 @@
     {
         public string LicensePlate { get; set; } = null!;
         public bool IsValid { get; set; }
-    }
+
+        public bool? WasAnyTicketUsed { get; set; }
+        }
 }

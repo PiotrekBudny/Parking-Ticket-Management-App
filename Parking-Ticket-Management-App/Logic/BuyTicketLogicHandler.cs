@@ -34,7 +34,8 @@ namespace Parking_Ticket_Management_App.Logic
                 LicensePlate = buyTicketRequest.LicensePlate,
                 ValidFrom = CalculateValidFromDate(),
                 ValidTo = validTo,
-                Amount = calculatedAmount
+                Amount = calculatedAmount,
+                WasUsed = false
             };
         }
 

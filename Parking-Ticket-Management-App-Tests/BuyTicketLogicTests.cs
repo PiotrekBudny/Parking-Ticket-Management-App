@@ -45,7 +45,8 @@ namespace Parking_Ticket_Management_App_Tests
                 Amount = expectedAmount,
                 ValidFrom = startPeriodDateTime,
                 ValidTo = expectedEndPeriodDateTime,
-                LicensePlate = licensePlate
+                LicensePlate = licensePlate,
+                WasUsed = false
             };
 
             //ACT
@@ -80,7 +81,8 @@ namespace Parking_Ticket_Management_App_Tests
                 Amount = expectedAmount,
                 ValidFrom = startPeriodDateTime,
                 ValidTo = expectedEndPeriodDateTime,
-                LicensePlate = licensePlate
+                LicensePlate = licensePlate,
+                WasUsed = false
             };
 
             //ACT
@@ -115,7 +117,8 @@ namespace Parking_Ticket_Management_App_Tests
                 Amount = expectedAmount,
                 ValidFrom = startPeriodDateTime,
                 ValidTo = expectedEndPeriodDateTime,
-                LicensePlate = licensePlate
+                LicensePlate = licensePlate,
+                WasUsed = false
             };
 
             //ACT
