@@ -29,12 +29,11 @@ builder.Services.AddScoped<ISystemDateTimeProvider, SystemDateTimeProvider>();
 builder.Services.AddSingleton<IMemoryAccess, MemoryHandler>();
 
 var app = builder.Build();
-app.MapOpenApi();
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.MapOpenApi();
-//}
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
 app.UseHttpsRedirection();
 
