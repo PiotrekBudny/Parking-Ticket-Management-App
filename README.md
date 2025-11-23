@@ -1,6 +1,6 @@
 # Parking Ticket Management App
 
-A modern ASP.NET Core Web API (.NET 9, C# 13) for managing parking tickets, including buying and validating monthly tickets.
+A modern ASP.NET Core Web API (.NET 10, C# 13) for managing parking tickets, including buying and validating monthly tickets.
 
 ## Features
 
@@ -66,7 +66,7 @@ A modern ASP.NET Core Web API (.NET 9, C# 13) for managing parking tickets, incl
 
 ### Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - Visual Studio 2022 or later
 
 ### Setup
