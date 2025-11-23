@@ -1,110 +1,81 @@
 # Parking Ticket Management App
 
-A modern ASP.NET Core Web API (.NET 10, C# 13) for managing parking tickets, including buying and validating monthly tickets.
+A small ASP.NET Core Web API (targeting .NET 10) that implements buying, validating and using monthly parking tickets. The service uses an in-memory store and is intended as training exercise.
 
-## Features
+## Quick overview
 
-- **Buy Parking Ticket:**  
-  Purchase a monthly parking ticket for a vehicle.
-
-- **Validate Parking Ticket:**  
-  Check if a ticket for a given license plate is valid.
-
-- **Health Check:**  
-  Simple endpoint to verify the service is running.
-
-- **Input Validation:**  
-  Uses [FluentValidation](https://fluentvalidation.net/) for request validation.
+- **Entry point:** `Parking-Ticket-Management-App/Program.cs`
+- **Controller:** `Parking-Ticket-Management-App/Controllers/ParkingTicketController.cs`
+- **Business logic:** `Parking-Ticket-Management-App/Logic/` (buy/validate/use/price handlers)
+- **In-memory storage:** `Parking-Ticket-Management-App/Memory/ParkingTicketMemory.cs` and `MemoryHandler.cs`
+- **Models:** `Parking-Ticket-Management-App/Memory/Models/ParkingTicket.cs` and controller models under `Controllers/Models/`
+- **Utilities:** `Parking-Ticket-Management-App/Utils/SystemDateTimeProvider.cs` and `Utils/Extensions/DateTimeExtensions.cs`
 
 ## Endpoints
 
-| Method | Route                        | Description                       |
-|--------|-----------------------------|-----------------------------------|
-| GET    | `/parking-ticket/is-alive`  | Health check                      |
-| POST   | `/parking-ticket/buy`       | Buy a monthly parking ticket      |
-| GET    | `/parking-ticket/validate`  | Validate a parking ticket         |
+| Method | Route                                      | Description |
+|--------|--------------------------------------------|-------------|
+| GET    | `/parking-ticket/is-alive`                 | Health check |
+| POST   | `/parking-ticket/buy`                      | Buy a monthly ticket (request body: `BuyTicketRequest`) |
+| GET    | `/parking-ticket/validate`                 | Validate ticket by license plate (query or model: `ValidateTicketRequest`) |
+| PATCH  | `/parking-ticket/{TicketId:guid}/use`      | Mark a ticket as used (body: `UseTicketRequest`) |
 
-## Request/Response Models
+Swagger/OpenAPI is available in development when running the project.
 
-### Buy Ticket
+## Key behaviours / notes
 
-**Request:**  
+- Tickets are stored in-process (in-memory). Restarting the app clears stored tickets.
+- Requests are validated using FluentValidation validators placed alongside the models.
+- Price calculation is implemented in `Logic/PriceCalculationLogicHandler.cs` (see `PricePerDay`).
+- `BuyTicketLogicHandler` calculates `ValidFrom`/`ValidTo` using Central European time logic.
+
+## Tests
+
+Unit tests are in the `Parking-Ticket-Management-App-Tests` project:
+
+- `BuyTicketLogicTests.cs`
+- `PriceCalculationLogicTests.cs`
+- `ValidateTicketLogicTests.cs`
+- `UseTicketLogicTests.cs`
+
+Run tests with:
+
+```powershell
+dotnet test
 ```
+
+## Build & run
+
+Prerequisites:
+
+- .NET 10 SDK
+
+Restore, build and run the API from the repository root:
+
+```powershell
+dotnet restore
+dotnet run --project Parking-Ticket-Management-App
+```
+
+Open `http://localhost:5000` (or the URL shown by the app) and the Swagger UI when running in Development.
+
+## Example requests
+
+Buy ticket (POST `/parking-ticket/buy`):
+
+```json
 {
-  "licensePlate": "ABC123"
+  "licensePlate": "AB12345"
 }
 ```
 
-**Response:**  
-```
-{
-  "ticketId": "guid",
-  "amount": 5.00,
-  "validFrom": "2025-10-04T00:00:00Z",
-  "validTo": "2025-11-01T00:00:00Z"
-}
-```
+Validate ticket (GET `/parking-ticket/validate?licensePlate=AB12345`)
 
-### Validate Ticket
+Use ticket (PATCH `/parking-ticket/{ticketId}/use`)
 
-**Request:**  
-```
-{
-  "licensePlate": "ABC123"
-}
-```
+## CI
 
-**Response:**  
-```
-{
-  "licensePlate": "ABC123",
-  "isValid": true
-}
-```
-
-## Getting Started
-
-### Prerequisites
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- Visual Studio 2022 or later
-
-### Setup
-
-1. **Clone the repository:**
-```
-   git clone https://github.com/PiotrekBudny/Parking-Ticket-Management-App.git
-```
-
-2. **Restore dependencies:**
-```
-   dotnet restore
-```
-
-3. **Run the application:**
-```
-   dotnet run
-```
-
-4. **API documentation:**  
-   OpenAPI/Swagger is available in development mode at `/swagger` or `/openapi`.
-
-### Testing Endpoints
-
-You can use tools like [Postman](https://www.postman.com/) or Visual Studio's HTTP files to test the API.
-
-## Project Structure
-
-- `Controllers/` - API endpoints
-- `Logic/` - Business logic and price calculation
-- `Memory/` - In-memory ticket storage
-- `Models/` - Request and response models
-- `Extensions/` - Utility extensions (e.g., DateTime trimming)
-
-## Validation
-
-- All requests are validated using FluentValidation.
-- Invalid requests return a `400 Bad Request` with error details.
+There is a GitHub Actions pipeline that builds the solution and runs tests on push/PR to `main` (see `.github/workflows/`).
 
 ## License
 
@@ -112,4 +83,4 @@ MIT
 
 ---
 
-**Contributions and issues are welcome!**
+Contributions, bug reports and improvements are welcome. If you'd like, I can also add example HTTP files or Postman collection for quick manual testing.
