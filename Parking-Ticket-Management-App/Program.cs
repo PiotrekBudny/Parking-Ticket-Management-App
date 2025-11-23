@@ -1,6 +1,7 @@
 using FluentValidation;
 using Parking_Ticket_Management_App.Controllers;
 using Parking_Ticket_Management_App.Controllers.Models.BuyMonthTicket;
+using Parking_Ticket_Management_App.Controllers.Models.UseTicket;
 using Parking_Ticket_Management_App.Controllers.Models.ValidateTicket;
 using Parking_Ticket_Management_App.Logic;
 using Parking_Ticket_Management_App.Memory;
@@ -16,22 +17,24 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IValidator<BuyTicketRequest>, BuyTicketRequestValidator>();
 builder.Services.AddScoped<IValidator<ValidateTicketRequest>, ValidateTicketRequestValidator>();
+builder.Services.AddScoped<IValidator<UseTicketRequest>, UseTicketRequestValidator>();
 
 builder.Services.AddScoped<IPriceCalculationLogicHandler, PriceCalculationLogicHandler>();
 builder.Services.AddScoped<IBuyTicketLogicHandler, BuyTicketLogicHandler>();
 builder.Services.AddScoped<IParkingTicketHandler, ParkingTicketHandler>();
 builder.Services.AddScoped<IValidateTicketLogicHandler, ValidateTicketLogicHandler>();
+builder.Services.AddScoped<IUseTicketLogicHandler, UseTicketLogicHandler>();
 builder.Services.AddScoped<ISystemDateTimeProvider, SystemDateTimeProvider>();
 
 builder.Services.AddSingleton<IMemoryAccess, MemoryHandler>();
 
 var app = builder.Build();
-
+app.MapOpenApi();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.MapOpenApi();
+//}
 
 app.UseHttpsRedirection();
 

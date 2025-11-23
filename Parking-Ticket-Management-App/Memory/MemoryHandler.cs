@@ -7,6 +7,9 @@ namespace Parking_Ticket_Management_App.Memory
     {
         void AddTicketToMemory(ParkingTicket ticket);
         List<ParkingTicket> GetAllParkingTicketsForLicensePlate(string licensePlate);
+        void UpdateTicketInMemory(ParkingTicket ticket);
+
+        ParkingTicket? GetTicketByIdentity(Guid ticketId);
     }
     
     public class MemoryHandler : IMemoryAccess
@@ -34,6 +37,23 @@ namespace Parking_Ticket_Management_App.Memory
         public List<ParkingTicket> GetAllParkingTicketsForLicensePlate(string licensePlate)
         {
             return [.. ParkingTicketMemory.TicketsInMemory.Where(t => t.LicensePlate.Equals(licensePlate, StringComparison.OrdinalIgnoreCase))];
+        }
+
+        public ParkingTicket? GetTicketByIdentity(Guid ticketId)
+        {
+            return ParkingTicketMemory.TicketsInMemory.FirstOrDefault(t => t.TicketId == ticketId);
+        }
+
+        public void UpdateTicketInMemory(ParkingTicket ticket)
+        {
+            var index = ParkingTicketMemory.TicketsInMemory.FindIndex(t => t.TicketId == ticket.TicketId);
+
+            if (index >= 0) ParkingTicketMemory.TicketsInMemory[index] = ticket;
+            
+            else
+            {
+                throw new KeyNotFoundException($"Ticket with ID {ticket.TicketId} not found in memory.");
+            }
         }
     }
 }

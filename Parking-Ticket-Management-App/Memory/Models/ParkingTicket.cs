@@ -7,5 +7,6 @@
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
         public decimal Amount { get; set; }
-    }
+        public bool WasUsed { get; set; } 
+        }
 }

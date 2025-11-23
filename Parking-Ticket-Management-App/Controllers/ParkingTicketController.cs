@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Parking_Ticket_Management_App.Controllers.Models;
 using Parking_Ticket_Management_App.Controllers.Models.BuyMonthTicket;
 using Parking_Ticket_Management_App.Controllers.Models.IsAlive;
+using Parking_Ticket_Management_App.Controllers.Models.UseTicket;
 using Parking_Ticket_Management_App.Controllers.Models.ValidateTicket;
 
 namespace Parking_Ticket_Management_App.Controllers
@@ -15,16 +16,19 @@ namespace Parking_Ticket_Management_App.Controllers
         private readonly IParkingTicketHandler _parkingTicketHandler;
         private IValidator _buyTicketRequestValidator;
         private IValidator _validateTicketRequestValidator;
+        private IValidator _useTicketRequestValidator;
 
-        public ParkingTicketController(ILogger<ParkingTicketController> logger, 
+        public ParkingTicketController(ILogger<ParkingTicketController> logger,
             IParkingTicketHandler parkingTicketHandler,
             IValidator<BuyTicketRequest> buyTicketRequestValidator,
-            IValidator<ValidateTicketRequest> validateTicketRequestValidator)
+            IValidator<ValidateTicketRequest> validateTicketRequestValidator,
+            IValidator<UseTicketRequest> useTicketRequestValidator)
         {
             _logger = logger;
             _parkingTicketHandler = parkingTicketHandler;
             _buyTicketRequestValidator = buyTicketRequestValidator;
             _validateTicketRequestValidator = validateTicketRequestValidator;
+            _useTicketRequestValidator = useTicketRequestValidator;
         }
 
 
@@ -77,7 +81,7 @@ namespace Parking_Ticket_Management_App.Controllers
         public async Task<IActionResult> ValidateTicket([FromQuery] ValidateTicketRequest validateTicketRequest)
         {
             _logger.LogInformation("ValidateTicket endpoint called.");
-            
+
             if (!ModelState.IsValid) return BadRequest(new ErrorResponse { Message = "Model binding failed." });
 
             var validationResult = await _validateTicketRequestValidator.ValidateAsync(new ValidationContext<ValidateTicketRequest>(validateTicketRequest));
@@ -102,6 +106,51 @@ namespace Parking_Ticket_Management_App.Controllers
                 _logger.LogError(ex, "An error occurred while processing the ValidateTicket request.");
 
                 return StatusCode(500, new ErrorResponse { Message = "An error occurred while processing your request." });
+            }
+        }
+
+
+        [HttpPatch("{TicketId:guid}/use")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 500)]
+        public async Task<IActionResult> UseTicket([FromRoute] UseTicketRequest useTicketRequest)
+        {
+            _logger.LogInformation("UseTicket endpoint called.");
+            if (!ModelState.IsValid) return BadRequest(new ErrorResponse { Message = "Model binding failed." });
+
+            var validationResult = await _useTicketRequestValidator.ValidateAsync(new ValidationContext<UseTicketRequest>(useTicketRequest));
+
+            if (!validationResult.IsValid)
+            {
+                var validationMessage = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
+
+                _logger.LogWarning($"UseTicket request validation failed: {validationMessage}");
+
+                return BadRequest(new ErrorResponse { Message = $"Validation failed. {validationMessage}" });
+            }
+
+            try
+            {
+                _parkingTicketHandler.HandleUseTicketRequest(useTicketRequest);
+
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogDebug(ex, "UseTicket: Ticket with id {TicketId} not found.", useTicketRequest.TicketId);
+                return NotFound(new ErrorResponse { Message = $"Ticket not found: {ex.Message}" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogDebug(ex, "An error occurred while processing the UseTicket request.");
+                return BadRequest(new ErrorResponse { Message = $"An error occurred while processing your request: {ex.Message}" });
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while processing the UseTicket request.");
+                return StatusCode(500, new ErrorResponse { Message = $"An error occurred while processing your request: { ex.Message }"});
             }
         }
     }
